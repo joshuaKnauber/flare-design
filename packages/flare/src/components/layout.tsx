@@ -109,7 +109,7 @@ export function Breadcrumb({
   onHover?: (el: Element) => void;
   onHoverEnd?: () => void;
 }) {
-  if (!el) return <span className="f-el-none">No element selected</span>;
+  if (!el) return null;
 
   const path: Element[] = [];
   let cur: Element | null = el;

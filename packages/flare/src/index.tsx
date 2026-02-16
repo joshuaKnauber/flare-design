@@ -1,15 +1,24 @@
-import { createRoot } from "react-dom/client";
 import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 import App from "./App";
 import styles from "./styles.css?inline";
 
 function loadFont() {
-  if (document.querySelector('link[data-flare-font]')) return;
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = "https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/style.min.css";
-  link.setAttribute("data-flare-font", "");
-  document.head.appendChild(link);
+  if (document.querySelector("link[data-flare-font]")) return;
+
+  const mono = document.createElement("link");
+  mono.rel = "stylesheet";
+  mono.href =
+    "https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/style.min.css";
+  mono.setAttribute("data-flare-font", "mono");
+  document.head.appendChild(mono);
+
+  const sans = document.createElement("link");
+  sans.rel = "stylesheet";
+  sans.href =
+    "https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.min.css";
+  sans.setAttribute("data-flare-font", "sans");
+  document.head.appendChild(sans);
 }
 
 function mount() {
@@ -37,7 +46,7 @@ function mount() {
   createRoot(mountPoint).render(
     <StrictMode>
       <App shadowHost={host} />
-    </StrictMode>
+    </StrictMode>,
   );
 }
 
