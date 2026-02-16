@@ -37,6 +37,7 @@ import {
   PropRow,
   Section,
   SelectDropdown,
+  SettingsPopover,
   SubPanel,
   ValueInput,
 } from "./components";
@@ -44,6 +45,7 @@ import { FONT_SIZE_UNITS, TYPO_UNITS } from "./constants";
 import {
   useAvailableFonts,
   useInspector,
+  usePosition,
   useStyleEditor,
   useTheme,
 } from "./hooks";
@@ -52,10 +54,8 @@ import {
   IconCorners,
   IconDashedRect,
   IconFlare,
-  IconMoon,
   IconRoundedRect,
   IconSolidRect,
-  IconSun,
 } from "./icons";
 import { buildPrompt } from "./utils";
 
@@ -90,6 +90,7 @@ export default function App({ shadowHost }: { shadowHost: HTMLElement }) {
     } catch {}
   };
   const { theme, toggle: toggleTheme } = useTheme(shadowHost);
+  const { side, toggle: toggleSide } = usePosition();
   const {
     inspecting,
     selectedEl,
@@ -113,14 +114,17 @@ export default function App({ shadowHost }: { shadowHost: HTMLElement }) {
 
   if (!expanded) {
     return (
-      <button className="f-trigger" onClick={() => toggleExpanded(true)}>
+      <button
+        className={`f-trigger${side === "left" ? " f-left" : ""}`}
+        onClick={() => toggleExpanded(true)}
+      >
         <IconFlare />
       </button>
     );
   }
 
   return (
-    <div className="f-panel">
+    <div className={`f-panel${side === "left" ? " f-left" : ""}`}>
       {/* Top bar */}
       <div className="f-topbar">
         <div className="f-brand">
@@ -128,13 +132,12 @@ export default function App({ shadowHost }: { shadowHost: HTMLElement }) {
           <span>Flare</span>
         </div>
         <div className="f-topbar-actions">
-          <button
-            className="f-theme-btn"
-            onClick={toggleTheme}
-            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          >
-            {theme === "dark" ? <IconSun /> : <IconMoon />}
-          </button>
+          <SettingsPopover
+            theme={theme}
+            onToggleTheme={toggleTheme}
+            side={side}
+            onToggleSide={toggleSide}
+          />
           <button
             className="f-collapse-btn"
             onClick={() => toggleExpanded(false)}

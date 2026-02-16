@@ -82,6 +82,11 @@
   transform: scale(0.97);
 }
 
+.f-trigger.f-left {
+  right: auto;
+  left: 16px;
+}
+
 /* ── Panel (expanded) ───────────────────────────── */
 .f-panel {
   position: fixed;
@@ -103,10 +108,27 @@
   animation: f-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.f-panel.f-left {
+  right: auto;
+  left: 12px;
+  animation-name: f-slide-in-left;
+}
+
 @keyframes f-slide-in {
   from {
     opacity: 0;
     transform: translateX(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes f-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-16px) scale(0.97);
   }
   to {
     opacity: 1;
@@ -140,7 +162,7 @@
 }
 
 .f-collapse-btn,
-.f-theme-btn {
+.f-settings-btn {
   width: 28px;
   height: 28px;
   border-radius: var(--f-radius-sm);
@@ -154,9 +176,54 @@
 }
 
 .f-collapse-btn:hover,
-.f-theme-btn:hover {
+.f-settings-btn:hover {
   background: var(--f-surface-2);
   color: var(--f-text);
+}
+
+/* ── Settings Popover ───────────────────────────── */
+.f-settings-wrap {
+  position: relative;
+}
+
+.f-settings-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 160px;
+  background: var(--f-bg);
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius);
+  box-shadow: 0 4px 16px rgba(0 0 0 / 0.12), 0 0 0 1px rgba(0 0 0 / 0.04);
+  padding: 4px;
+  z-index: 10;
+  animation: f-pop-in 0.12s ease both;
+}
+
+@keyframes f-pop-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.f-settings-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  border-radius: var(--f-radius-sm);
+  background: transparent;
+  color: var(--f-text);
+  font-family: var(--f-font);
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.f-settings-item:hover {
+  background: var(--f-surface-2);
 }
 
 /* ── Inspect Bar ────────────────────────────────── */

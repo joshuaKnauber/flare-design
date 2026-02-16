@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { toHex } from "../utils";
 import { SelectDropdown } from "./inputs";
 

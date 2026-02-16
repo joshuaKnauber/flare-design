@@ -30,6 +30,33 @@ export function useTheme(shadowHost: HTMLElement) {
   return { theme, toggle };
 }
 
+// ── Position ───────────────────────────────────────
+const POS_KEY = "flare-position";
+export type PanelSide = "right" | "left";
+
+export function usePosition() {
+  const [side, setSideState] = useState<PanelSide>(() => {
+    try {
+      const v = localStorage.getItem(POS_KEY);
+      return v === "left" ? "left" : "right";
+    } catch {
+      return "right";
+    }
+  });
+
+  const toggle = useCallback(() => {
+    setSideState((prev) => {
+      const next = prev === "right" ? "left" : "right";
+      try {
+        localStorage.setItem(POS_KEY, next);
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  return { side, toggle };
+}
+
 // ── Inspector ──────────────────────────────────────
 const OVERLAY_BASE: Partial<CSSStyleDeclaration> = {
   position: "fixed",

@@ -127,8 +127,6 @@ function getAncestorPath(el: Element, maxDepth = 4): string {
   return parts.join(" > ");
 }
 
-
-
 /** Build a compact description for one element's changes */
 function buildElementBlock(entry: ElementEntry): string {
   const { el, overrides, original } = entry;
