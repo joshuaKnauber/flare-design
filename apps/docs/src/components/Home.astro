@@ -50,6 +50,7 @@ If not using Vite, add this script tag to the HTML to only load on localhost:
     <p class="sub">A visual CSS editor for designers who ship with AI.</p>
 
     <button class="cta plausible-event-name=Try+It" id="try-btn">Try it here</button>
+    <p class="mobile-hint">Best experienced on desktop</p>
 
     <section class="codeblock">
       <div class="cb-header">
@@ -403,8 +404,19 @@ If not using Vite, add this script tag to the HTML to only load on localhost:
     background: #f3f3f3;
   }
 
+  .mobile-hint {
+    display: none;
+    font-size: 12.5px;
+    color: #aaa;
+    margin: 10px 0 0;
+    letter-spacing: -0.005em;
+  }
+
   /* ── Responsive ──────────────────────── */
   @media (max-width: 640px) {
+    .mobile-hint {
+      display: block;
+    }
     main {
       padding: 64px 20px 56px;
     }
