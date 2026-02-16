@@ -2,6 +2,10 @@
   "name": "flare-dev",
   "version": "0.0.1",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joshuaKnauber/flare-dev"
+  },
   "exports": {
     "./vite": {
       "types": "./dist/vite.d.mts",
