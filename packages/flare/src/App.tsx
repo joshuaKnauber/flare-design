@@ -22,7 +22,7 @@ import {
   Underline,
   WrapText,
 } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AlignmentMatrix,
   BoxShadowEditor,
@@ -98,6 +98,15 @@ export default function App({ shadowHost }: { shadowHost: HTMLElement }) {
     clearTimeout(morphTimer.current);
     morphTimer.current = setTimeout(() => setContentReady(true), 200);
   }, []);
+
+  // Allow external code to open Flare by writing to localStorage
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "flare-open") handleOpen();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [handleOpen]);
 
   const handleClose = useCallback(() => {
     setContentReady(false);

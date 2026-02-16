@@ -1,6 +1,39 @@
 ---
-const scriptSnippet = `<span class="dim">&lt;!-- Add to your HTML --&gt;</span>
+const viteSnippet = `<span class="dim">// vite.config.ts</span>
+<span class="kw">import</span> flare <span class="kw">from</span> <span class="str">"flare-dev/vite"</span>
+
+<span class="kw">export default</span> defineConfig({
+  plugins: [flare()],
+})`;
+
+const scriptAlwaysSnippet = `<span class="dim">&lt;!-- Load on every page, including production --&gt;</span>
 &lt;script src=<span class="str">"https://unpkg.com/flare-dev/dist/flare.js"</span>&gt;&lt;/script&gt;`;
+
+const scriptDevSnippet = `<span class="dim">&lt;!-- Or, load only on localhost to save bandwidth --&gt;</span>
+&lt;script&gt;
+  <span class="kw">if</span> ([<span class="str">"localhost"</span>].includes(location.hostname)) {
+    <span class="kw">const</span> s = document.createElement(<span class="str">"script"</span>);
+    s.src = <span class="str">"https://unpkg.com/flare-dev/dist/flare.js"</span>;
+    document.head.appendChild(s);
+  }
+&lt;/script&gt;`;
+
+const claudePrompt = `Set up flare-dev for visual CSS editing.
+
+If this project uses Vite:
+  npm install -D flare-dev
+  Then add the plugin to vite.config.ts:
+    import flare from "flare-dev/vite"
+    plugins: [flare()]
+
+If not using Vite, add this script tag to the HTML to only load on localhost:
+  &lt;script&gt;
+    if (["localhost"].includes(location.hostname)) {
+      const s = document.createElement("script");
+      s.src = "https://unpkg.com/flare-dev/dist/flare.js";
+      document.head.appendChild(s);
+    }
+  &lt;/script&gt;`;
 ---
 
 <div class="page">
@@ -16,23 +49,39 @@ const scriptSnippet = `<span class="dim">&lt;!-- Add to your HTML --&gt;</span>
     <h1 class="text-pretty">Design in the browser with Flare.</h1>
     <p class="sub">A visual CSS editor for designers who ship with AI.</p>
 
+    <button class="cta plausible-event-name=Try+It" id="try-btn">Try it here</button>
+
     <section class="codeblock">
       <div class="cb-header">
         <div class="cb-tabs" role="tablist">
           <button class="cb-tab active plausible-event-name=Claude+Code" data-tab="claude" role="tab" aria-selected="true">Claude Code</button>
+          <button class="cb-tab plausible-event-name=Vite+Plugin" data-tab="vite" role="tab" aria-selected="false">Vite</button>
           <button class="cb-tab plausible-event-name=Script+Tag" data-tab="script" role="tab" aria-selected="false">Script Tag</button>
         </div>
-        <button class="cb-copy plausible-event-name=Copy" aria-label="Copy to clipboard">
-          <span class="copy-default">Copy</span>
-          <span class="copy-done">Copied</span>
-        </button>
       </div>
       <div class="cb-body">
         <div class="panel active" id="panel-claude">
-          <pre>Add flare-dev as a dev dependency and set up the Vite plugin from flare-dev/vite.</pre>
+          <div class="snippet" data-copy="claude">
+            <button class="snippet-copy plausible-event-name=Copy" aria-label="Copy">Copy</button>
+            <pre set:html={claudePrompt} />
+          </div>
+        </div>
+        <div class="panel" id="panel-vite">
+          <div class="snippet" data-copy="vite">
+            <button class="snippet-copy plausible-event-name=Copy" aria-label="Copy">Copy</button>
+            <pre set:html={viteSnippet} />
+          </div>
         </div>
         <div class="panel" id="panel-script">
-          <pre set:html={scriptSnippet} />
+          <div class="snippet" data-copy="scriptAlways">
+            <button class="snippet-copy plausible-event-name=Copy" aria-label="Copy">Copy</button>
+            <pre set:html={scriptAlwaysSnippet} />
+          </div>
+          <div class="snippet-divider"></div>
+          <div class="snippet" data-copy="scriptDev">
+            <button class="snippet-copy plausible-event-name=Copy" aria-label="Copy">Copy</button>
+            <pre set:html={scriptDevSnippet} />
+          </div>
         </div>
       </div>
     </section>
@@ -112,12 +161,36 @@ const scriptSnippet = `<span class="dim">&lt;!-- Add to your HTML --&gt;</span>
     animation: fadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
   }
 
+  .cta {
+    font-family: 'Geist', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    padding: 10px 28px;
+    border: none;
+    border-radius: 10px;
+    background: #ff7a00;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 32px;
+    transition: background 0.15s, transform 0.15s;
+    animation: fadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+  }
+
+  .cta:hover {
+    background: #e86e00;
+  }
+
+  .cta:active {
+    transform: scale(0.97);
+  }
+
   @keyframes trailFloat {
     0%, 100% {
-      transform: translate(0, 0);
+      transform: translate(0, 0) rotate(-45deg) scaleX(1) rotate(45deg);
     }
     50% {
-      transform: translate(var(--tx), var(--ty));
+      transform: translate(var(--tx), var(--ty)) rotate(-45deg) scaleX(var(--sx)) rotate(45deg);
     }
   }
 
@@ -125,10 +198,10 @@ const scriptSnippet = `<span class="dim">&lt;!-- Add to your HTML --&gt;</span>
     animation: trailFloat var(--dur) ease-in-out infinite;
   }
 
-  .t1 { --tx: 14px; --ty: -14px; --dur: 2.6s; animation-delay: 0s; }
-  .t2 { --tx: 11px; --ty: -11px; --dur: 3.2s; animation-delay: 0.4s; }
-  .t3 { --tx: 9px;  --ty: -9px;  --dur: 2s;   animation-delay: 0.2s; }
-  .t4 { --tx: 18px; --ty: -18px; --dur: 3.6s; animation-delay: 0.7s; }
+  .t1 { --tx: 10px; --ty: -10px; --sx: 1.12; --dur: 2.8s; animation-delay: 0s; }
+  .t2 { --tx: 8px;  --ty: -8px;  --sx: 1.1;  --dur: 3.4s; animation-delay: 0.4s; }
+  .t3 { --tx: 6px;  --ty: -6px;  --sx: 1.08; --dur: 2.2s; animation-delay: 0.2s; }
+  .t4 { --tx: 12px; --ty: -12px; --sx: 1.15; --dur: 3.8s; animation-delay: 0.7s; }
 
   @media (prefers-reduced-motion: reduce) {
     .trail { animation: none; }
@@ -192,13 +265,20 @@ const scriptSnippet = `<span class="dim">&lt;!-- Add to your HTML --&gt;</span>
     color: #888;
   }
 
-  .cb-copy {
+  .snippet {
+    position: relative;
+  }
+
+  .snippet-copy {
+    position: absolute;
+    top: -10px;
+    right: -10px;
     font-family: 'Geist Mono', monospace;
     font-size: 11.5px;
     font-weight: 500;
     padding: 4px 10px;
     border: 1px solid #e8e8e8;
-    background: #fafafa;
+    background: #f0f0f0;
     color: #999;
     border-radius: 6px;
     cursor: pointer;
@@ -206,23 +286,20 @@ const scriptSnippet = `<span class="dim">&lt;!-- Add to your HTML --&gt;</span>
     letter-spacing: 0.01em;
   }
 
-  .cb-copy:hover {
+  .snippet-copy:hover {
     border-color: #ccc;
     color: #555;
-    background: #f5f5f5;
+    background: #eaeaea;
   }
 
-  .cb-copy .copy-done {
-    display: none;
-  }
-
-  .cb-copy.copied .copy-default {
-    display: none;
-  }
-
-  .cb-copy.copied .copy-done {
-    display: inline;
+  .snippet-copy.copied {
     color: #ff7a00;
+    border-color: #ffd9b3;
+  }
+
+  .snippet-divider {
+    border-top: 1px solid #e5e5e5;
+    margin: 14px -22px 20px;
   }
 
   .cb-body {
@@ -348,6 +425,10 @@ const scriptSnippet = `<span class="dim">&lt;!-- Add to your HTML --&gt;</span>
       padding: 16px 18px;
     }
 
+    .snippet-divider {
+      margin: 14px -18px;
+    }
+
     .cb-body pre {
       font-size: 12px;
     }
@@ -367,7 +448,6 @@ const scriptSnippet = `<span class="dim">&lt;!-- Add to your HTML --&gt;</span>
 <script>
   const tabs = document.querySelectorAll<HTMLButtonElement>('.cb-tab');
   const panels = document.querySelectorAll<HTMLElement>('.panel');
-  const copyBtn = document.querySelector<HTMLButtonElement>('.cb-copy');
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
@@ -386,18 +466,60 @@ const scriptSnippet = `<span class="dim">&lt;!-- Add to your HTML --&gt;</span>
   });
 
   const copyTexts: Record<string, string> = {
-    claude: `Add flare-dev as a dev dependency and set up the Vite plugin from flare-dev/vite.`,
-    script: `<!-- Add to your HTML -->
-<script src="https://unpkg.com/flare-dev/dist/flare.js"><\/script>`,
+    claude: `Set up flare-dev for visual CSS editing.
+
+If this project uses Vite:
+  npm install -D flare-dev
+  Then add the plugin to vite.config.ts:
+    import flare from "flare-dev/vite"
+    plugins: [flare()]
+
+If not using Vite, add this script tag to the HTML to only load on localhost:
+  <script>
+    if (["localhost"].includes(location.hostname)) {
+      const s = document.createElement("script");
+      s.src = "https://unpkg.com/flare-dev/dist/flare.js";
+      document.head.appendChild(s);
+    }
+  <\/script>`,
+    vite: `// vite.config.ts
+import flare from "flare-dev/vite"
+
+export default defineConfig({
+  plugins: [flare()],
+})`,
+    scriptAlways: `<script src="https://unpkg.com/flare-dev/dist/flare.js"><\/script>`,
+    scriptDev: `<script>
+  if (["localhost"].includes(location.hostname)) {
+    const s = document.createElement("script");
+    s.src = "https://unpkg.com/flare-dev/dist/flare.js";
+    document.head.appendChild(s);
+  }
+<\/script>`,
   };
 
-  copyBtn?.addEventListener('click', () => {
-    const activeTab = document.querySelector<HTMLButtonElement>('.cb-tab.active');
-    const key = activeTab?.dataset.tab;
-    if (!key || !copyTexts[key]) return;
+  document.getElementById('try-btn')?.addEventListener('click', () => {
+    try {
+      const val = String(Date.now());
+      localStorage.setItem('flare-open', val);
+      // storage event doesn't fire on the originating tab, so dispatch manually
+      window.dispatchEvent(new StorageEvent('storage', { key: 'flare-open', newValue: val }));
+    } catch {}
+  });
 
-    navigator.clipboard.writeText(copyTexts[key]);
-    copyBtn.classList.add('copied');
-    setTimeout(() => copyBtn.classList.remove('copied'), 1800);
+  document.querySelectorAll<HTMLButtonElement>('.snippet-copy').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.closest('.snippet')?.getAttribute('data-copy');
+      if (!key || !copyTexts[key]) return;
+
+      navigator.clipboard.writeText(copyTexts[key]);
+      const original = btn.textContent;
+      btn.textContent = 'Copied';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.classList.remove('copied');
+      }, 1800);
+    });
   });
 </script>
