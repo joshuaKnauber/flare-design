@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getElementLabel, isFlareElement } from "./utils";
+import { type ElementEntry, getElementLabel, isFlareElement } from "./utils";
 
 // ── Theme ──────────────────────────────────────────
 const THEME_KEY = "flare-theme";
@@ -559,10 +559,27 @@ function readComputedStyles(el: Element): Record<string, string> {
   return result;
 }
 
-export interface ElementEntry {
-  el: Element;
-  overrides: Record<string, string>;
-  original: Record<string, string>;
+export function useClickOutside(
+  ref: React.RefObject<HTMLElement | null>,
+  active: boolean,
+  onClickOutside: () => void,
+) {
+  const callbackRef = useRef(onClickOutside);
+  callbackRef.current = onClickOutside;
+
+  useEffect(() => {
+    if (!active) return;
+    const root = ref.current?.getRootNode() as Document | ShadowRoot;
+    if (!root) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        callbackRef.current();
+      }
+    };
+    root.addEventListener("mousedown", handler as EventListener);
+    return () =>
+      root.removeEventListener("mousedown", handler as EventListener);
+  }, [active, ref]);
 }
 
 export function useStyleEditor(selectedEl: Element | null) {

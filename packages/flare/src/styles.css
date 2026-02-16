@@ -872,34 +872,6 @@
   padding: 8px 10px;
 }
 
-/* ── Display Contextual Controls ─────────────────── */
-.f-display-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--f-border);
-  margin-top: 4px;
-}
-
-/* ── Flex / Grid Contextual Controls ───────────── */
-.f-flex-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 6px;
-  border-top: 1px solid var(--f-border);
-  margin-top: 2px;
-}
-
-.f-sub-label {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--f-text-mute);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
 /* ── Value Input Prefix ────────────────────────── */
 .f-value-prefix {
   color: var(--f-text-mute);
@@ -938,12 +910,6 @@
   overflow: hidden;
   opacity: 0;
   pointer-events: none;
-}
-
-.f-swatch.small {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
 }
 
 .f-color-hex {
@@ -1022,154 +988,6 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-
-.f-border-expand-btn {
-  all: unset;
-  font-family: var(--f-font);
-  font-size: 10px;
-  color: var(--f-text-mute);
-  cursor: pointer;
-  padding: 2px 0;
-  transition: color 0.12s;
-}
-
-.f-border-expand-btn:hover {
-  color: var(--f-accent);
-}
-
-/* ── Border Row ─────────────────────────────────── */
-.f-border-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.f-border-style {
-  font-family: var(--f-font);
-  font-size: 10px;
-  color: var(--f-text-mute);
-}
-
-/* ── Opacity Slider ─────────────────────────────── */
-.f-opacity-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-
-.f-opacity-track {
-  flex: 1;
-  height: 4px;
-  background: var(--f-surface-3);
-  border-radius: 99px;
-  position: relative;
-  cursor: pointer;
-}
-
-.f-opacity-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: var(--f-accent);
-  border-radius: 99px;
-}
-
-.f-opacity-thumb {
-  position: absolute;
-  top: 50%;
-  width: 10px;
-  height: 10px;
-  background: var(--f-text);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 1px 3px rgba(0 0 0 / 0.4);
-  cursor: grab;
-}
-
-.f-opacity-row .f-value-input {
-  width: 52px;
-  flex-shrink: 0;
-}
-
-/* ── Box Model Diagram ──────────────────────────── */
-.f-boxmodel {
-  padding: 4px 0;
-}
-
-.f-boxmodel-ring {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px dashed;
-  border-radius: 6px;
-}
-
-.f-boxmodel-margin {
-  border-color: rgba(255 122 0 / 0.3);
-  background: rgba(255 122 0 / 0.03);
-  padding: 20px 24px;
-}
-
-.f-boxmodel-padding {
-  border-color: rgba(110 200 120 / 0.35);
-  background: rgba(110 200 120 / 0.04);
-  padding: 18px 22px;
-  width: 100%;
-}
-
-.f-boxmodel-content {
-  width: 100%;
-  padding: 10px;
-  background: var(--f-surface-2);
-  border: 1px solid var(--f-border-h);
-  border-radius: 4px;
-  text-align: center;
-  font-family: var(--f-font);
-  font-size: 11px;
-  color: var(--f-text-dim);
-}
-
-.f-boxmodel-label {
-  position: absolute;
-  top: 3px;
-  left: 6px;
-  font-size: 9px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.f-boxmodel-margin > .f-boxmodel-label {
-  color: rgba(255 122 0 / 0.6);
-}
-
-.f-boxmodel-padding > .f-boxmodel-label {
-  color: rgba(110 200 120 / 0.6);
-}
-
-.f-boxmodel-val {
-  position: absolute;
-  font-family: var(--f-font);
-  font-size: 10px;
-  color: var(--f-text-dim);
-  cursor: text;
-  padding: 1px 3px;
-  border-radius: 2px;
-  transition: background 0.12s, color 0.12s;
-}
-
-.f-boxmodel-val:hover {
-  background: var(--f-surface-3);
-  color: var(--f-text);
-}
-
-.f-boxmodel-val.top    { top: 3px; left: 50%; transform: translateX(-50%); }
-.f-boxmodel-val.bottom { bottom: 3px; left: 50%; transform: translateX(-50%); }
-.f-boxmodel-val.left   { left: 4px; top: 50%; transform: translateY(-50%); }
-.f-boxmodel-val.right  { right: 4px; top: 50%; transform: translateY(-50%); }
 
 /* ── Editable Value Input ──────────────────────── */
 .f-value-input.editable {

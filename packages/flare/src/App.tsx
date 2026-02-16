@@ -30,7 +30,7 @@ import {
   ColorSwatch,
   CopyPromptBar,
   DisplayModePicker,
-  FONT_SIZE_UNITS,
+  ExpandableInput,
   FontDropdown,
   GridTrackEditor,
   IconButton,
@@ -38,193 +38,42 @@ import {
   Section,
   SelectDropdown,
   SubPanel,
-  TYPO_UNITS,
   ValueInput,
 } from "./components";
+import { FONT_SIZE_UNITS, TYPO_UNITS } from "./constants";
 import {
   useAvailableFonts,
   useInspector,
   useStyleEditor,
   useTheme,
 } from "./hooks";
-import { IconCollapse, IconFlare, IconMoon, IconSun } from "./icons";
+import {
+  IconCollapse,
+  IconCorners,
+  IconDashedRect,
+  IconFlare,
+  IconMoon,
+  IconRoundedRect,
+  IconSolidRect,
+  IconSun,
+} from "./icons";
 import { buildPrompt } from "./utils";
 
 const ICO = { size: 14, strokeWidth: 1.5 };
 
-function RadiusControl({
-  editor,
-}: {
-  editor: ReturnType<typeof useStyleEditor>;
-}) {
-  const [expanded, setExpanded] = useState(false);
+const RADIUS_DETAILS = [
+  { prefix: "TL", prop: "borderTopLeftRadius" },
+  { prefix: "TR", prop: "borderTopRightRadius" },
+  { prefix: "BL", prop: "borderBottomLeftRadius" },
+  { prefix: "BR", prop: "borderBottomRightRadius" },
+];
 
-  if (!expanded) {
-    return (
-      <div className="f-radius-row">
-        <ValueInput
-          prefix="Radius"
-          value={editor.getValue("borderRadius")}
-          onChange={(v) => editor.setValue("borderRadius", v)}
-        />
-        <button
-          className="f-radius-toggle"
-          onClick={() => setExpanded(true)}
-          type="button"
-          title="Edit individual corners"
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path
-              d="M2 10V6a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v4"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="f-radius-expanded">
-      <div className="f-radius-header">
-        <span className="f-radius-label">Radius</span>
-        <button
-          className="f-radius-toggle"
-          onClick={() => setExpanded(false)}
-          type="button"
-          title="Use single value"
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <rect
-              x="2"
-              y="2"
-              width="10"
-              height="10"
-              rx="3"
-              stroke="currentColor"
-              strokeWidth="1.2"
-            />
-          </svg>
-        </button>
-      </div>
-      <div className="f-prop-grid">
-        <ValueInput
-          prefix="TL"
-          value={editor.getValue("borderTopLeftRadius")}
-          onChange={(v) => editor.setValue("borderTopLeftRadius", v)}
-        />
-        <ValueInput
-          prefix="TR"
-          value={editor.getValue("borderTopRightRadius")}
-          onChange={(v) => editor.setValue("borderTopRightRadius", v)}
-        />
-      </div>
-      <div className="f-prop-grid">
-        <ValueInput
-          prefix="BL"
-          value={editor.getValue("borderBottomLeftRadius")}
-          onChange={(v) => editor.setValue("borderBottomLeftRadius", v)}
-        />
-        <ValueInput
-          prefix="BR"
-          value={editor.getValue("borderBottomRightRadius")}
-          onChange={(v) => editor.setValue("borderBottomRightRadius", v)}
-        />
-      </div>
-    </div>
-  );
-}
-
-function BorderWidthControl({
-  editor,
-}: {
-  editor: ReturnType<typeof useStyleEditor>;
-}) {
-  const [expanded, setExpanded] = useState(false);
-
-  if (!expanded) {
-    return (
-      <div className="f-radius-row">
-        <ValueInput
-          prefix="Width"
-          value={editor.getValue("borderWidth")}
-          onChange={(v) => editor.setValue("borderWidth", v)}
-        />
-        <button
-          className="f-radius-toggle"
-          onClick={() => setExpanded(true)}
-          type="button"
-          title="Edit per-side widths"
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <rect
-              x="2"
-              y="2"
-              width="10"
-              height="10"
-              rx="1"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeDasharray="3 2"
-            />
-          </svg>
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="f-radius-expanded">
-      <div className="f-radius-header">
-        <span className="f-radius-label">Width</span>
-        <button
-          className="f-radius-toggle"
-          onClick={() => setExpanded(false)}
-          type="button"
-          title="Use single value"
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <rect
-              x="2"
-              y="2"
-              width="10"
-              height="10"
-              rx="1"
-              stroke="currentColor"
-              strokeWidth="1.2"
-            />
-          </svg>
-        </button>
-      </div>
-      <div className="f-prop-grid">
-        <ValueInput
-          prefix="T"
-          value={editor.getValue("borderTopWidth")}
-          onChange={(v) => editor.setValue("borderTopWidth", v)}
-        />
-        <ValueInput
-          prefix="R"
-          value={editor.getValue("borderRightWidth")}
-          onChange={(v) => editor.setValue("borderRightWidth", v)}
-        />
-      </div>
-      <div className="f-prop-grid">
-        <ValueInput
-          prefix="B"
-          value={editor.getValue("borderBottomWidth")}
-          onChange={(v) => editor.setValue("borderBottomWidth", v)}
-        />
-        <ValueInput
-          prefix="L"
-          value={editor.getValue("borderLeftWidth")}
-          onChange={(v) => editor.setValue("borderLeftWidth", v)}
-        />
-      </div>
-    </div>
-  );
-}
+const BORDER_WIDTH_DETAILS = [
+  { prefix: "T", prop: "borderTopWidth" },
+  { prefix: "R", prop: "borderRightWidth" },
+  { prefix: "B", prop: "borderBottomWidth" },
+  { prefix: "L", prop: "borderLeftWidth" },
+];
 
 export default function App({ shadowHost }: { shadowHost: HTMLElement }) {
   const [expanded, setExpanded] = useState(() => {
@@ -860,7 +709,15 @@ export default function App({ shadowHost }: { shadowHost: HTMLElement }) {
                   placeholder="Cursor"
                 />
               </div>
-              <RadiusControl editor={editor} />
+              <ExpandableInput
+                label="Radius"
+                shorthandProp="borderRadius"
+                detailProps={RADIUS_DETAILS}
+                collapsedIcon={<IconCorners />}
+                expandedIcon={<IconRoundedRect />}
+                getValue={editor.getValue}
+                setValue={editor.setValue as (p: string, v: string) => void}
+              />
             </Section>
 
             <Section title="Fill & Borders" defaultOpen={false}>
@@ -900,7 +757,15 @@ export default function App({ shadowHost }: { shadowHost: HTMLElement }) {
                   value={editor.getValue("borderStyle")}
                   onChange={(v) => editor.setValue("borderStyle", v)}
                 />
-                <BorderWidthControl editor={editor} />
+                <ExpandableInput
+                  label="Width"
+                  shorthandProp="borderWidth"
+                  detailProps={BORDER_WIDTH_DETAILS}
+                  collapsedIcon={<IconDashedRect />}
+                  expandedIcon={<IconSolidRect />}
+                  getValue={editor.getValue}
+                  setValue={editor.setValue as (p: string, v: string) => void}
+                />
               </SubPanel>
 
               <SubPanel label="Outline">

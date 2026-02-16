@@ -155,6 +155,68 @@ export function IconChevron({ open }: { open: boolean }) {
   );
 }
 
+export function IconCorners() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path
+        d="M2 10V6a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v4"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function IconRoundedRect() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <rect
+        x="2"
+        y="2"
+        width="10"
+        height="10"
+        rx="3"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+    </svg>
+  );
+}
+
+export function IconDashedRect() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <rect
+        x="2"
+        y="2"
+        width="10"
+        height="10"
+        rx="1"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeDasharray="3 2"
+      />
+    </svg>
+  );
+}
+
+export function IconSolidRect() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <rect
+        x="2"
+        y="2"
+        width="10"
+        height="10"
+        rx="1"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+    </svg>
+  );
+}
+
 export function IconCollapse() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

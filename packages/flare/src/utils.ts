@@ -1,3 +1,25 @@
+export interface ElementEntry {
+  el: Element;
+  overrides: Record<string, string>;
+  original: Record<string, string>;
+}
+
+export function toHex(color: string): string {
+  const m = color.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)/);
+  if (m) {
+    const [, r, g, b] = m;
+    return (
+      "#" +
+      [r, g, b].map((c) => Number(c).toString(16).padStart(2, "0")).join("")
+    );
+  }
+  if (color.startsWith("#"))
+    return color.length === 4
+      ? "#" + color[1] + color[1] + color[2] + color[2] + color[3] + color[3]
+      : color;
+  return "#000000";
+}
+
 export function getElementLabel(el: Element) {
   const tag = el.tagName.toLowerCase();
   const id = el.id ? `#${el.id}` : "";
@@ -105,11 +127,7 @@ function getAncestorPath(el: Element, maxDepth = 4): string {
   return parts.join(" > ");
 }
 
-interface ElementEntry {
-  el: Element;
-  overrides: Record<string, string>;
-  original: Record<string, string>;
-}
+
 
 /** Build a compact description for one element's changes */
 function buildElementBlock(entry: ElementEntry): string {
