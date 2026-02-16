@@ -1,0 +1,8 @@
+{
+  "name": "flare",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ]
+}

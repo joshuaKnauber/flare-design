@@ -1,0 +1,153 @@
+export function getElementLabel(el: Element) {
+  const tag = el.tagName.toLowerCase();
+  const id = el.id ? `#${el.id}` : "";
+  const cls =
+    el.className && typeof el.className === "string"
+      ? "." + el.className.trim().split(/\s+/).slice(0, 2).join(".")
+      : "";
+  return { tag, id, cls, full: `<${tag}>${id}${cls}` };
+}
+
+export function isFlareElement(el: Element) {
+  return (
+    el.closest?.("#flare-host") ||
+    el.hasAttribute?.("data-flare-overlay") ||
+    el.hasAttribute?.("data-flare-tooltip")
+  );
+}
+
+export function getCssSelector(el: Element): string {
+  const tag = el.tagName.toLowerCase();
+  if (el.id) return `#${el.id}`;
+  if (el.className && typeof el.className === "string") {
+    const cls = el.className.trim().split(/\s+/);
+    return cls.length > 0 ? `.${cls[0]}` : tag;
+  }
+  return tag;
+}
+
+// ── Prompt helpers ─────────────────────────────────
+
+function toKebab(s: string): string {
+  return s.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
+}
+
+/** Try to convert rgb()/rgba() to a short hex like #1a1a1a */
+function rgbToHex(val: string): string {
+  const m = val.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)/);
+  if (!m) return val;
+  const hex =
+    "#" +
+    [m[1], m[2], m[3]]
+      .map((c) => Number(c).toString(16).padStart(2, "0"))
+      .join("");
+  // Also note the original rgba alpha if present
+  const a = val.match(/rgba?\(\s*\d+,\s*\d+,\s*\d+,\s*([\d.]+)/);
+  return a && parseFloat(a[1]) < 1
+    ? `${hex} (opacity ${Math.round(parseFloat(a[1]) * 100)}%)`
+    : hex;
+}
+
+/** Clean up a computed value for readability */
+function humanizeValue(val: string): string {
+  if (!val || val === "none" || val === "normal" || val === "auto") return val;
+  // Convert rgb(r,g,b) to hex
+  return val.replace(/rgba?\(\s*\d+,\s*\d+,\s*\d+(?:,\s*[\d.]+)?\)/g, (match) =>
+    rgbToHex(match),
+  );
+}
+
+/** Get the visible text content of an element, truncated */
+function getTextSnippet(el: Element, maxLen = 60): string {
+  const text =
+    (el as HTMLElement).innerText?.trim() ?? el.textContent?.trim() ?? "";
+  if (!text) return "";
+  // Only take first line
+  const firstLine = text.split("\n")[0].trim();
+  return firstLine.length > maxLen
+    ? firstLine.slice(0, maxLen) + "…"
+    : firstLine;
+}
+
+/** Short label for an element in a path: prefer #id, then a short class, else just the tag */
+function shortLabel(el: Element): string {
+  const tag = el.tagName.toLowerCase();
+  if (el.id) return `${tag}#${el.id}`;
+  if (el.className && typeof el.className === "string") {
+    // Pick the first class that looks like a meaningful name (not a Tailwind utility)
+    const meaningful = el.className
+      .trim()
+      .split(/\s+/)
+      .find(
+        (c) =>
+          !c.includes("[") &&
+          !c.includes("/") &&
+          !c.includes(":") &&
+          c.length < 24,
+      );
+    if (meaningful) return `${tag}.${meaningful}`;
+  }
+  return tag;
+}
+
+/** Build a readable ancestor path: body > main.hero > div.container > h1 */
+function getAncestorPath(el: Element, maxDepth = 4): string {
+  const parts: string[] = [];
+  let cur: Element | null = el;
+  while (cur && cur !== document.documentElement && parts.length < maxDepth) {
+    if (isFlareElement(cur)) {
+      cur = cur.parentElement;
+      continue;
+    }
+    parts.unshift(shortLabel(cur));
+    cur = cur.parentElement;
+  }
+  return parts.join(" > ");
+}
+
+interface ElementEntry {
+  el: Element;
+  overrides: Record<string, string>;
+  original: Record<string, string>;
+}
+
+/** Build a compact description for one element's changes */
+function buildElementBlock(entry: ElementEntry): string {
+  const { el, overrides, original } = entry;
+  const actualChanges = Object.entries(overrides).filter(
+    ([prop, val]) => val !== original[prop],
+  );
+
+  if (actualChanges.length === 0) return "";
+
+  const path = getAncestorPath(el);
+  const text = getTextSnippet(el, 40);
+
+  const changeLines = actualChanges
+    .map(([prop, val]) => {
+      const before = humanizeValue(original[prop] || "unset");
+      const after = humanizeValue(val);
+      return `  ${toKebab(prop)}: ${before} → ${after}`;
+    })
+    .join("\n");
+
+  const identifier = text ? `"${text}" (${path})` : path;
+  return `${identifier}\n${changeLines}`;
+}
+
+/**
+ * Build a concise prompt for an LLM to apply visual changes to source code.
+ */
+export function buildPrompt(entries: ElementEntry[]): string {
+  const blocks = entries
+    .map((entry) => buildElementBlock(entry))
+    .filter(Boolean);
+
+  if (blocks.length === 0) return "";
+
+  return [
+    `I tweaked styles in the browser — apply to source. DOM classes may not match source directly (could be Tailwind, CSS modules, components, etc).`,
+    ``,
+    blocks.join("\n\n"),
+  ].join("\n");
+}

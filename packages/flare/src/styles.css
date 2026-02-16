@@ -1,0 +1,1476 @@
+/* ═══════════════════════════════════════════════════
+   FLARE — Inspector Panel
+   Aesthetic: Dark tool-chrome. Figma meets Linear.
+   ═══════════════════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Dark theme (default) ───────────────────────── */
+:host {
+  --f-bg:         #1a1a1a;
+  --f-surface:    #242424;
+  --f-surface-2:  #2c2c2c;
+  --f-surface-3:  #343434;
+  --f-border:     rgba(255 255 255 / 0.06);
+  --f-border-h:   rgba(255 255 255 / 0.1);
+  --f-text:       #e5e5e5;
+  --f-text-dim:   #888888;
+  --f-text-mute:  #5c5c5c;
+  --f-accent:     #ff7a00;
+  --f-accent-dim: rgba(255 122 0 / 0.12);
+  --f-swatch-border: rgba(255 255 255 / 0.1);
+  --f-shadow-panel: 0 8px 40px rgba(0 0 0 / 0.45), 0 0 0 1px rgba(0 0 0 / 0.3);
+  --f-shadow-trigger: 0 2px 8px rgba(0 0 0 / 0.3), 0 0 0 1px rgba(0 0 0 / 0.2);
+  --f-shadow-trigger-h: 0 4px 16px rgba(0 0 0 / 0.4), 0 0 0 1px rgba(255 122 0 / 0.15), 0 0 20px rgba(255 122 0 / 0.06);
+  --f-radius:     10px;
+  --f-radius-sm:  6px;
+  --f-font:       'Geist Mono', 'SF Mono', 'Fira Code', monospace;
+  --f-z:          2147483647;
+}
+
+/* ── Light theme ────────────────────────────────── */
+:host(.f-light) {
+  --f-bg:         #f5f5f5;
+  --f-surface:    #ffffff;
+  --f-surface-2:  #f0f0f0;
+  --f-surface-3:  #e5e5e5;
+  --f-border:     rgba(0 0 0 / 0.08);
+  --f-border-h:   rgba(0 0 0 / 0.14);
+  --f-text:       #1a1a1a;
+  --f-text-dim:   #666666;
+  --f-text-mute:  #999999;
+  --f-accent:     #e06800;
+  --f-accent-dim: rgba(224 104 0 / 0.1);
+  --f-swatch-border: rgba(0 0 0 / 0.1);
+  --f-shadow-panel: 0 8px 40px rgba(0 0 0 / 0.1), 0 0 0 1px rgba(0 0 0 / 0.06);
+  --f-shadow-trigger: 0 2px 8px rgba(0 0 0 / 0.08), 0 0 0 1px rgba(0 0 0 / 0.06);
+  --f-shadow-trigger-h: 0 4px 16px rgba(0 0 0 / 0.12), 0 0 0 1px rgba(224 104 0 / 0.2), 0 0 20px rgba(224 104 0 / 0.06);
+}
+
+/* ── Trigger (collapsed) ────────────────────────── */
+.f-trigger {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--f-border);
+  background: var(--f-bg);
+  color: var(--f-text);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  z-index: var(--f-z);
+  box-shadow: var(--f-shadow-trigger);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.f-trigger:hover {
+  transform: scale(1.06);
+  border-color: var(--f-accent);
+  box-shadow: var(--f-shadow-trigger-h);
+}
+
+.f-trigger:active {
+  transform: scale(0.97);
+}
+
+/* ── Panel (expanded) ───────────────────────────── */
+.f-panel {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  bottom: 12px;
+  width: 320px;
+  z-index: var(--f-z);
+  background: var(--f-bg);
+  border: 1px solid var(--f-border);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--f-font);
+  font-size: 12px;
+  color: var(--f-text);
+  box-shadow: var(--f-shadow-panel);
+  animation: f-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes f-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* ── Top Bar ────────────────────────────────────── */
+.f-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--f-border);
+  flex-shrink: 0;
+}
+
+.f-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+
+.f-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.f-collapse-btn,
+.f-theme-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--f-radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--f-text-dim);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.f-collapse-btn:hover,
+.f-theme-btn:hover {
+  background: var(--f-surface-2);
+  color: var(--f-text);
+}
+
+/* ── Inspect Bar ────────────────────────────────── */
+.f-inspect-bar {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--f-border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.f-inspect-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 12px;
+  border-radius: var(--f-radius-sm);
+  border: none;
+  background: var(--f-surface-2);
+  color: var(--f-text-dim);
+  font-family: var(--f-font);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.f-inspect-btn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.f-inspect-btn:hover {
+  background: var(--f-surface-3);
+  color: var(--f-text);
+}
+
+.f-inspect-btn.active {
+  background: var(--f-accent);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(255 122 0 / 0.3);
+}
+
+.f-el-none {
+  color: var(--f-text-mute);
+  font-size: 11px;
+  font-style: italic;
+}
+
+/* ── Breadcrumb ────────────────────────────────── */
+.f-breadcrumb {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  gap: 0;
+  padding: 0 2px;
+  font-family: var(--f-font);
+  font-size: 11px;
+}
+
+.f-breadcrumb::-webkit-scrollbar {
+  display: none;
+}
+
+.f-crumb-item {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.f-crumb-sep {
+  color: var(--f-text-mute);
+  margin: 0 3px;
+  font-size: 9px;
+}
+
+.f-crumb {
+  border: none;
+  background: transparent;
+  color: var(--f-text-mute);
+  font-family: var(--f-font);
+  font-size: 11px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.12s, background 0.12s;
+}
+
+.f-crumb:hover {
+  color: var(--f-text);
+  background: var(--f-surface-2);
+}
+
+.f-crumb.active {
+  color: var(--f-accent);
+  background: var(--f-accent-dim);
+}
+
+/* ── Scroll Container ───────────────────────────── */
+.f-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--f-surface-3) transparent;
+}
+
+.f-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.f-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.f-scroll::-webkit-scrollbar-thumb {
+  background: var(--f-surface-3);
+  border-radius: 99px;
+}
+
+/* ── Empty State ───────────────────────────────── */
+.f-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 24px;
+  color: var(--f-text-mute);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ── Section ────────────────────────────────────── */
+.f-section {
+  border-bottom: 1px solid var(--f-border);
+}
+
+.f-section-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  color: var(--f-text-dim);
+  font-family: var(--f-font);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.f-section-header:hover {
+  color: var(--f-text);
+  background: var(--f-surface);
+}
+
+.f-section-body {
+  padding: 2px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Property Row ───────────────────────────────── */
+.f-prop-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 28px;
+}
+
+.f-prop-label {
+  font-size: 11px;
+  color: var(--f-text-dim);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.f-prop-value {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── Property Grid ──────────────────────────────── */
+.f-prop-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.f-prop-grid-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.f-prop-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.f-prop-cell .f-prop-label {
+  font-size: 10px;
+}
+
+/* ── Value Input ────────────────────────────────── */
+.f-value-input {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  background: var(--f-surface);
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius-sm);
+  font-family: var(--f-font);
+  font-size: 11px;
+  color: var(--f-text);
+  min-width: 0;
+  cursor: text;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.f-value-input:hover {
+  border-color: var(--f-border-h);
+  background: var(--f-surface-2);
+}
+
+.f-value-suffix {
+  color: var(--f-text-mute);
+  font-size: 10px;
+}
+
+/* ── Custom Dropdown ──────────────────────────────── */
+.f-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.f-dropdown-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  height: 28px;
+  box-sizing: border-box;
+  background: var(--f-surface);
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius-sm);
+  font-family: var(--f-font);
+  font-size: 11px;
+  color: var(--f-text);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.f-dropdown-trigger:hover {
+  border-color: var(--f-border-h);
+  background-color: var(--f-surface-2);
+}
+
+.f-dropdown-chevron {
+  color: var(--f-text-mute);
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.f-dropdown-chevron.open {
+  transform: rotate(180deg);
+}
+
+.f-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--f-surface-2);
+  border: 1px solid var(--f-border-h);
+  border-radius: var(--f-radius-sm);
+  padding: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  z-index: 10;
+  box-shadow: 0 4px 16px rgba(0 0 0 / 0.3);
+}
+
+.f-dropdown-option {
+  all: unset;
+  font-family: var(--f-font);
+  font-size: 11px;
+  color: var(--f-text-dim);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.f-dropdown-option:hover {
+  background: var(--f-surface-3);
+  color: var(--f-text);
+}
+
+.f-dropdown-option.active {
+  background: var(--f-accent-dim);
+  color: var(--f-accent);
+}
+
+/* ── Font Dropdown ──────────────────────────────── */
+.f-font-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.f-font-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--f-surface-2);
+  border: 1px solid var(--f-border-h);
+  border-radius: var(--f-radius-sm);
+  padding: 3px;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  box-shadow: 0 4px 16px rgba(0 0 0 / 0.3);
+}
+
+.f-font-search {
+  all: unset;
+  font-family: var(--f-font);
+  font-size: 11px;
+  color: var(--f-text);
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--f-border);
+  margin-bottom: 3px;
+}
+
+.f-font-search::placeholder {
+  color: var(--f-text-mute);
+}
+
+.f-font-list {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.f-font-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.f-font-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.f-font-list::-webkit-scrollbar-thumb {
+  background: var(--f-border);
+  border-radius: 2px;
+}
+
+.f-font-empty {
+  font-family: var(--f-font);
+  font-size: 11px;
+  color: var(--f-text-mute);
+  padding: 4px 8px;
+}
+
+/* ── Icon Button Group ─────────────────────────── */
+.f-icon-btn-group {
+  display: flex;
+  background: var(--f-surface);
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius-sm);
+  overflow: hidden;
+  height: 28px;
+  box-sizing: border-box;
+}
+
+.f-icon-btn {
+  flex: 1;
+  padding: 0;
+  min-width: 28px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: var(--f-text-mute);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: color 0.12s, background 0.12s;
+}
+
+.f-icon-btn:hover {
+  color: var(--f-text-dim);
+  background: var(--f-surface-2);
+}
+
+.f-icon-btn.active {
+  color: var(--f-text);
+  background: var(--f-surface-3);
+}
+
+.f-icon-btn + .f-icon-btn {
+  border-left: 1px solid var(--f-border);
+}
+
+/* ── Alignment Matrix ──────────────────────────── */
+.f-align-matrix {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  place-items: center;
+  gap: 4px;
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+  background: var(--f-surface);
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius-sm);
+  flex-shrink: 0;
+}
+
+.f-align-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: var(--f-surface-3);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.12s, transform 0.12s;
+}
+
+.f-align-dot:hover {
+  background: var(--f-text-mute);
+  transform: scale(1.3);
+}
+
+.f-align-dot.active {
+  background: var(--f-accent);
+  box-shadow: 0 0 6px rgba(255 122 0 / 0.3);
+}
+
+.f-align-dot.spread {
+  background: var(--f-accent);
+  opacity: 0.55;
+}
+
+.f-align-dot.spread.active {
+  opacity: 1;
+}
+
+/* ── Display Mode Picker ──────────────────────── */
+.f-display-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.f-display-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.f-display-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 4px 6px;
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius-sm);
+  background: var(--f-surface);
+  color: var(--f-text-mute);
+  cursor: pointer;
+  font-family: var(--f-font);
+  font-size: 9px;
+  font-weight: 500;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.f-display-tile:hover {
+  border-color: var(--f-border-h);
+  background: var(--f-surface-2);
+  color: var(--f-text-dim);
+}
+
+.f-display-tile.active {
+  border-color: var(--f-accent);
+  background: var(--f-accent-dim);
+  color: var(--f-accent);
+}
+
+.f-display-tile.f-display-more {
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.f-display-tile.f-display-more .f-dropdown {
+  width: 100%;
+  height: 100%;
+}
+
+.f-display-tile.f-display-more .f-dropdown-trigger {
+  height: 100%;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 9px;
+  justify-content: center;
+  padding: 4px;
+}
+
+.f-display-tile.f-display-more .f-dropdown-chevron {
+  display: none;
+}
+
+.f-dropdown-placeholder {
+  opacity: 0.5;
+}
+
+/* ── Flex / Grid Layout Controls ───────────────── */
+.f-flex-bar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.f-flex-bar > .f-icon-btn-group {
+  flex: 1;
+}
+
+.f-flex-bar > .f-icon-btn-group:last-child {
+  flex: 0 0 auto;
+}
+
+/* ── Grid Track Editor ─────────────────────────── */
+.f-grid-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.f-grid-track-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.f-grid-track-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0 4px;
+}
+
+.f-grid-track-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--f-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.f-grid-track-add {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  color: var(--f-text-mute);
+  cursor: pointer;
+  border-radius: var(--f-radius-sm);
+  transition: color 0.12s, background 0.12s;
+}
+
+.f-grid-track-add:hover {
+  color: var(--f-accent);
+  background: var(--f-surface-2);
+}
+
+.f-grid-track-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 0;
+}
+
+.f-grid-track-num {
+  font-size: 10px;
+  color: var(--f-text-mute);
+  width: 14px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.f-grid-track-row > .f-dropdown {
+  flex: 0 0 60px;
+}
+
+.f-grid-track-input {
+  flex: 1;
+  min-width: 0;
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius-sm);
+  background: var(--f-surface);
+  color: var(--f-text);
+  font-family: var(--f-font);
+  font-size: 11px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.f-grid-track-input:focus {
+  border-color: var(--f-accent);
+}
+
+.f-grid-track-input-wide {
+  flex: 2;
+}
+
+.f-grid-track-auto-label {
+  flex: 1;
+  font-size: 10px;
+  color: var(--f-text-mute);
+  padding: 0 6px;
+}
+
+.f-grid-track-remove {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  color: var(--f-text-mute);
+  cursor: pointer;
+  border-radius: var(--f-radius-sm);
+  flex-shrink: 0;
+  transition: color 0.12s, background 0.12s;
+}
+
+.f-grid-track-remove:hover {
+  color: #ef4444;
+  background: var(--f-surface-2);
+}
+
+.f-grid-track-empty {
+  font-size: 10px;
+  color: var(--f-text-mute);
+  padding: 4px 0;
+  font-style: italic;
+}
+
+.f-flex-align-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.f-flex-align-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* ── Sub-Panel ────────────────────────────────────── */
+.f-subpanel {
+  background: var(--f-surface);
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius-sm);
+}
+
+.f-subpanel-label {
+  display: block;
+  padding: 6px 10px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--f-text-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--f-border);
+  background: var(--f-surface);
+}
+
+.f-subpanel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+/* ── Display Contextual Controls ─────────────────── */
+.f-display-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--f-border);
+  margin-top: 4px;
+}
+
+/* ── Flex / Grid Contextual Controls ───────────── */
+.f-flex-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--f-border);
+  margin-top: 2px;
+}
+
+.f-sub-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--f-text-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Value Input Prefix ────────────────────────── */
+.f-value-prefix {
+  color: var(--f-text-mute);
+  font-size: 10px;
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+/* ── Color Swatch ───────────────────────────────── */
+.f-color-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.f-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid var(--f-swatch-border);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+
+.f-swatch:hover {
+  transform: scale(1.12);
+}
+
+.f-color-picker {
+  position: absolute;
+  width: 0;
+  height: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.f-swatch.small {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.f-color-hex {
+  font-family: var(--f-font);
+  font-size: 11px;
+  color: var(--f-text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.f-color-row.editable {
+  cursor: text;
+}
+
+.f-color-row.editable:hover .f-color-hex {
+  color: var(--f-accent);
+}
+
+.f-color-input {
+  all: unset;
+  font-family: var(--f-font);
+  font-size: 11px;
+  color: var(--f-text);
+  min-width: 0;
+  width: 100%;
+}
+
+/* ── Radius Control ─────────────────────────────── */
+.f-radius-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.f-radius-row > .f-value-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.f-radius-toggle {
+  all: unset;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--f-radius-sm);
+  color: var(--f-text-mute);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s, color 0.12s;
+}
+
+.f-radius-toggle:hover {
+  background: var(--f-surface-2);
+  color: var(--f-text);
+}
+
+.f-radius-expanded {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.f-radius-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.f-radius-label {
+  font-family: var(--f-font);
+  font-size: 10px;
+  color: var(--f-text-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.f-border-expand-btn {
+  all: unset;
+  font-family: var(--f-font);
+  font-size: 10px;
+  color: var(--f-text-mute);
+  cursor: pointer;
+  padding: 2px 0;
+  transition: color 0.12s;
+}
+
+.f-border-expand-btn:hover {
+  color: var(--f-accent);
+}
+
+/* ── Border Row ─────────────────────────────────── */
+.f-border-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.f-border-style {
+  font-family: var(--f-font);
+  font-size: 10px;
+  color: var(--f-text-mute);
+}
+
+/* ── Opacity Slider ─────────────────────────────── */
+.f-opacity-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.f-opacity-track {
+  flex: 1;
+  height: 4px;
+  background: var(--f-surface-3);
+  border-radius: 99px;
+  position: relative;
+  cursor: pointer;
+}
+
+.f-opacity-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--f-accent);
+  border-radius: 99px;
+}
+
+.f-opacity-thumb {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  background: var(--f-text);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1px 3px rgba(0 0 0 / 0.4);
+  cursor: grab;
+}
+
+.f-opacity-row .f-value-input {
+  width: 52px;
+  flex-shrink: 0;
+}
+
+/* ── Box Model Diagram ──────────────────────────── */
+.f-boxmodel {
+  padding: 4px 0;
+}
+
+.f-boxmodel-ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed;
+  border-radius: 6px;
+}
+
+.f-boxmodel-margin {
+  border-color: rgba(255 122 0 / 0.3);
+  background: rgba(255 122 0 / 0.03);
+  padding: 20px 24px;
+}
+
+.f-boxmodel-padding {
+  border-color: rgba(110 200 120 / 0.35);
+  background: rgba(110 200 120 / 0.04);
+  padding: 18px 22px;
+  width: 100%;
+}
+
+.f-boxmodel-content {
+  width: 100%;
+  padding: 10px;
+  background: var(--f-surface-2);
+  border: 1px solid var(--f-border-h);
+  border-radius: 4px;
+  text-align: center;
+  font-family: var(--f-font);
+  font-size: 11px;
+  color: var(--f-text-dim);
+}
+
+.f-boxmodel-label {
+  position: absolute;
+  top: 3px;
+  left: 6px;
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.f-boxmodel-margin > .f-boxmodel-label {
+  color: rgba(255 122 0 / 0.6);
+}
+
+.f-boxmodel-padding > .f-boxmodel-label {
+  color: rgba(110 200 120 / 0.6);
+}
+
+.f-boxmodel-val {
+  position: absolute;
+  font-family: var(--f-font);
+  font-size: 10px;
+  color: var(--f-text-dim);
+  cursor: text;
+  padding: 1px 3px;
+  border-radius: 2px;
+  transition: background 0.12s, color 0.12s;
+}
+
+.f-boxmodel-val:hover {
+  background: var(--f-surface-3);
+  color: var(--f-text);
+}
+
+.f-boxmodel-val.top    { top: 3px; left: 50%; transform: translateX(-50%); }
+.f-boxmodel-val.bottom { bottom: 3px; left: 50%; transform: translateX(-50%); }
+.f-boxmodel-val.left   { left: 4px; top: 50%; transform: translateY(-50%); }
+.f-boxmodel-val.right  { right: 4px; top: 50%; transform: translateY(-50%); }
+
+/* ── Editable Value Input ──────────────────────── */
+.f-value-input.editable {
+  cursor: text;
+}
+
+.f-value-input.editable:hover {
+  border-color: var(--f-accent);
+}
+
+.f-value-input.editable.focused {
+  border-color: var(--f-accent);
+  background: var(--f-surface-2);
+}
+
+.f-value-input input {
+  all: unset;
+  width: 100%;
+  font-family: var(--f-font);
+  font-size: 11px;
+  color: var(--f-text);
+  min-width: 0;
+}
+
+/* Scrubable prefix — ew-resize cursor */
+.f-value-prefix.scrubable {
+  cursor: ew-resize;
+  user-select: none;
+}
+
+/* Keyword display (auto, fit-content, etc.) */
+.f-value-input.keyword {
+  cursor: default;
+}
+
+.f-keyword-label {
+  color: var(--f-text-dim);
+  font-style: italic;
+  font-size: 11px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Unit Dropdown ─────────────────────────────── */
+.f-unit-dropdown-wrap {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+.f-unit-btn {
+  all: unset;
+  font-family: var(--f-font);
+  font-size: 9px;
+  color: var(--f-text-mute);
+  padding: 1px 4px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.f-unit-btn:hover {
+  background: var(--f-surface-3);
+  color: var(--f-text-dim);
+}
+
+.f-unit-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: var(--f-surface-2);
+  border: 1px solid var(--f-border-h);
+  border-radius: var(--f-radius-sm);
+  padding: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0 0 0 / 0.25);
+  min-width: 44px;
+}
+
+.f-unit-option {
+  all: unset;
+  font-family: var(--f-font);
+  font-size: 10px;
+  color: var(--f-text-dim);
+  padding: 3px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.1s, color 0.1s;
+}
+
+.f-unit-option:hover {
+  background: var(--f-surface-3);
+  color: var(--f-text);
+}
+
+.f-unit-option.active {
+  background: var(--f-accent-dim);
+  color: var(--f-accent);
+}
+
+/* ── Box Shadow Editor ───────────────────────────── */
+.f-shadow-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.f-shadow-field {
+  display: flex;
+  align-items: center;
+  background: var(--f-surface);
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius-sm);
+  height: 28px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.f-shadow-field:focus-within {
+  border-color: var(--f-accent);
+}
+
+.f-shadow-field-label {
+  font-family: var(--f-font);
+  font-size: 10px;
+  color: var(--f-text-mute);
+  padding: 0 6px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.f-shadow-input {
+  all: unset;
+  font-family: var(--f-font);
+  font-size: 11px;
+  color: var(--f-text);
+  width: 100%;
+  min-width: 0;
+  padding-right: 6px;
+  -moz-appearance: textfield;
+}
+
+.f-shadow-input::-webkit-inner-spin-button,
+.f-shadow-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.f-shadow-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.f-shadow-color-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.f-shadow-color-label {
+  font-family: var(--f-font);
+  font-size: 11px;
+  color: var(--f-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.f-shadow-inset-btn {
+  all: unset;
+  font-family: var(--f-font);
+  font-size: 10px;
+  color: var(--f-text-mute);
+  padding: 3px 8px;
+  border-radius: var(--f-radius-sm);
+  border: 1px solid var(--f-border);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.f-shadow-inset-btn:hover {
+  background: var(--f-surface-2);
+  color: var(--f-text);
+}
+
+.f-shadow-inset-btn.active {
+  background: var(--f-accent-dim);
+  color: var(--f-accent);
+  border-color: var(--f-accent);
+}
+
+/* ── Copy Prompt Bar ───────────────────────────── */
+.f-copy-bar {
+  position: relative;
+  overflow: hidden;
+  padding: 10px 12px;
+  border-top: 1px solid var(--f-accent);
+  background: rgba(255 122 0 / 0.08);
+  flex-shrink: 0;
+}
+
+.f-copy-bar-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.f-changes-count {
+  font-size: 11px;
+  color: var(--f-accent);
+  font-weight: 600;
+}
+
+.f-copy-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.f-reset-btn {
+  padding: 5px 10px;
+  border-radius: var(--f-radius-sm);
+  border: 1px solid var(--f-border);
+  background: transparent;
+  color: var(--f-text-dim);
+  font-family: var(--f-font);
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.f-reset-btn:hover {
+  background: var(--f-surface-2);
+  color: var(--f-text);
+  border-color: var(--f-border-h);
+}
+
+.f-copy-btn {
+  padding: 5px 12px;
+  border-radius: var(--f-radius-sm);
+  border: 1px solid var(--f-accent);
+  background: var(--f-accent);
+  color: #fff;
+  font-family: var(--f-font);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.f-copy-btn:hover {
+  opacity: 0.9;
+}
+
+.f-copy-btn:active {
+  transform: scale(0.97);
+}
+
+/* ── Countdown state ───────────────────────────── */
+.f-copy-bar-countdown {
+  background: rgba(255 122 0 / 0.12);
+}
+
+.f-copy-progress {
+  position: absolute;
+  inset: 0;
+  background: rgba(255 122 0 / 0.10);
+  animation: f-progress-shrink 5s linear forwards;
+  transform-origin: left;
+}
+
+@keyframes f-progress-shrink {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+.f-cancel-btn {
+  padding: 5px 12px;
+  border-radius: var(--f-radius-sm);
+  border: 1px solid rgba(255 122 0 / 0.3);
+  background: transparent;
+  color: var(--f-accent);
+  font-family: var(--f-font);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.f-cancel-btn:hover {
+  background: rgba(255 122 0 / 0.12);
+  border-color: var(--f-accent);
+}
